@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ferretería Tico — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #0f0e0c;
+      --surface: #1a1915;
+      --border:  #2e2c27;
+      --accent:  #e8a020;
+      --text:    #f0ede6;
+      --muted:   #7a7568;
+      --danger:  #e53935;
+      --success: #4caf50;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    /* Background texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% -10%,
+          rgba(232,160,32,.08) 0%, transparent 70%),
+        repeating-linear-gradient(
+          0deg, transparent, transparent 40px,
+          rgba(255,255,255,.01) 40px, rgba(255,255,255,.01) 41px
+        );
+      pointer-events: none;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-top: 3px solid var(--accent);
+      border-radius: 16px;
+      padding: 2.5rem 2rem;
+      width: 100%;
+      max-width: 420px;
+      box-shadow: 0 24px 64px rgba(0,0,0,.4);
+      position: relative;
+    }
+
+    .logo {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 2.2rem;
+      letter-spacing: 3px;
+      color: var(--accent);
+      text-align: center;
+      margin-bottom: .2rem;
+    }
+    .logo span { color: var(--text); }
+
+    .subtitle {
+      text-align: center;
+      font-size: .8rem;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 2rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      background: var(--bg);
+      border-radius: 8px;
+      padding: 4px;
+      margin-bottom: 1.8rem;
+      border: 1px solid var(--border);
+    }
+    .tab {
+      flex: 1;
+      padding: .55rem;
+      text-align: center;
+      font-size: .85rem;
+      font-weight: 600;
+      color: var(--muted);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all .2s;
+      user-select: none;
+    }
+    .tab.active {
+      background: var(--accent);
+      color: #000;
+    }
+
+    /* Form */
+    .form-row { margin-bottom: 1.1rem; }
+    .form-row label {
+      display: block;
+      font-size: .72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      margin-bottom: .4rem;
+    }
+    .form-row input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      padding: .7rem 1rem;
+      border-radius: 9px;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    .form-row input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(232,160,32,.12);
+    }
+    .form-row input::placeholder { color: var(--muted); opacity: .6; }
+
+    .btn {
+      width: 100%;
+      padding: .8rem;
+      background: var(--accent);
+      color: #000;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .95rem;
+      font-weight: 700;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all .15s;
+      margin-top: .5rem;
+      letter-spacing: .5px;
+    }
+    .btn:hover:not(:disabled) {
+      background: #f0b030;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(232,160,32,.3);
+    }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+    .msg {
+      margin-top: 1rem;
+      padding: .75rem 1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      text-align: center;
+      display: none;
+    }
+    .msg.error   { background: rgba(229,57,53,.12); border: 1px solid var(--danger);  color: #ef9a9a; display: block; }
+    .msg.success { background: rgba(76,175,80,.12);  border: 1px solid var(--success); color: #a5d6a7; display: block; }
+    .msg.info    { background: rgba(232,160,32,.1);  border: 1px solid var(--accent);  color: var(--accent); display: block; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      margin: 1.2rem 0;
+      color: var(--muted);
+      font-size: .78rem;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .forgot {
+      text-align: right;
+      margin-top: -.5rem;
+      margin-bottom: 1rem;
+    }
+    .forgot a {
+      font-size: .8rem;
+      color: var(--muted);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color .2s;
+    }
+    .forgot a:hover { color: var(--accent); }
+
+    /* Loading spinner */
+    .spinner {
+      display: inline-block;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(0,0,0,.3);
+      border-top-color: #000;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Config panel */
+    .config-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .config-panel p {
+      font-size: .78rem;
+      color: var(--muted);
+      margin-bottom: .6rem;
+    }
+    .config-panel input {
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      padding: .5rem .8rem;
+      border-radius: 7px;
+      outline: none;
+      margin-bottom: .5rem;
+    }
+    .config-panel input:focus { border-color: var(--accent); }
+    .btn-sm {
+      width: auto;
+      padding: .4rem 1rem;
+      font-size: .82rem;
+      margin-top: 0;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 1.5rem;
+      font-family: 'DM Mono', monospace;
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="logo">Ferretería <span>Tico</span></div>
+  <div class="subtitle">Sistema de Inventario</div>
+
+  <!-- Config panel (solo si no hay credenciales guardadas) -->
+  <div class="config-panel" id="configPanel">
+    <p>⚙ Configura las credenciales de Supabase (solo una vez):</p>
+    <input type="text"     id="cfgUrl" placeholder="https://xxxx.supabase.co"/>
+    <input type="password" id="cfgKey" placeholder="anon public key (eyJ...)"/>
+    <button class="btn btn-sm" onclick="guardarConfig()">Guardar</button>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" id="tabLogin"    onclick="cambiarTab('login')">Iniciar sesión</div>
+    <div class="tab"        id="tabRegister" onclick="cambiarTab('register')">Registrarse</div>
+  </div>
+
+  <!-- LOGIN FORM -->
+  <div id="formLogin">
+    <div class="form-row">
+      <label>Correo electrónico</label>
+      <input type="email" id="loginEmail" placeholder="correo@ejemplo.com"
+             onkeydown="if(event.key==='Enter') loginSubmit()"/>
+    </div>
+    <div class="form-row">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') loginSubmit()"/>
+    </div>
+    <div class="forgot"><a onclick="mostrarReset()">¿Olvidaste tu contraseña?</a></div>
+    <button class="btn" id="btnLogin" onclick="loginSubmit()">Entrar</button>
+    <div class="msg" id="loginMsg"></div>
+  </div>
+
+  <!-- REGISTER FORM -->
+  <div id="formRegister" style="display:none">
+    <div class="form-row">
+      <label>Nombre completo</label>
+      <input type="text" id="regNombre" placeholder="Ej: Laura Sánchez"/>
+    </div>
+    <div class="form-row">
+      <label>Correo electrónico</label>
+      <input type="email" id="regEmail" placeholder="correo@ejemplo.com"/>
+    </div>
+    <div class="form-row">
+      <label>Contraseña (mínimo 8 caracteres)</label>
+      <input type="password" id="regPass" placeholder="••••••••"/>
+    </div>
+    <div class="form-row">
+      <label>Confirmar contraseña</label>
+      <input type="password" id="regPass2" placeholder="••••••••"
+             onkeydown="if(event.key==='Enter') registerSubmit()"/>
+    </div>
+    <button class="btn" id="btnRegister" onclick="registerSubmit()">Crear cuenta</button>
+    <div class="msg" id="registerMsg"></div>
+  </div>
+
+  <!-- RESET PASSWORD FORM -->
+  <div id="formReset" style="display:none">
+    <p style="font-size:.88rem; color:var(--muted); margin-bottom:1rem;">
+      Te enviaremos un enlace para restablecer tu contraseña.
+    </p>
+    <div class="form-row">
+      <label>Correo electrónico</label>
+      <input type="email" id="resetEmail" placeholder="correo@ejemplo.com"/>
+    </div>
+    <button class="btn" id="btnReset" onclick="resetSubmit()">Enviar enlace</button>
+    <div style="margin-top:.8rem; text-align:center;">
+      <a onclick="cambiarTab('login')"
+         style="font-size:.82rem; color:var(--muted); cursor:pointer;">
+        ← Volver al login
+      </a>
+    </div>
+    <div class="msg" id="resetMsg"></div>
+  </div>
+
+  <div class="footer-note">
+    Ferretería Tico · ESCOM IPN · Bases de Datos
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  CONFIG
+// ─────────────────────────────────────────────
+let SUPA_URL = localStorage.getItem('supa_url') || '';
+let SUPA_KEY = localStorage.getItem('supa_key') || '';
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (SUPA_URL && SUPA_KEY) {
+    document.getElementById('configPanel').style.display = 'none';
+  } else {
+    document.getElementById('cfgUrl').value = SUPA_URL;
+    document.getElementById('cfgKey').value = SUPA_KEY;
+  }
+  checkSession();
+});
+
+function guardarConfig() {
+  SUPA_URL = document.getElementById('cfgUrl').value.trim().replace(/\/$/, '');
+  SUPA_KEY = document.getElementById('cfgKey').value.trim();
+  if (!SUPA_URL || !SUPA_KEY) { alert('Completa ambos campos'); return; }
+  localStorage.setItem('supa_url', SUPA_URL);
+  localStorage.setItem('supa_key', SUPA_KEY);
+  document.getElementById('configPanel').style.display = 'none';
+}
+
+// ─────────────────────────────────────────────
+//  SUPABASE AUTH HELPERS
+// ─────────────────────────────────────────────
+async function supaAuth(endpoint, body) {
+  const res = await fetch(`${SUPA_URL}/auth/v1/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': SUPA_KEY,
+    },
+    body: JSON.stringify(body),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error_description || data.msg || 'Error desconocido');
+  return data;
+}
+
+async function checkSession() {
+  const token = localStorage.getItem('supa_token');
+  if (!token || !SUPA_URL) return;
+  try {
+    const res = await fetch(`${SUPA_URL}/auth/v1/user`, {
+      headers: { 'apikey': SUPA_KEY, 'Authorization': `Bearer ${token}` }
+    });
+    if (res.ok) {
+      window.location.href = 'index.html';
+    }
+  } catch (e) {}
+}
+
+// ─────────────────────────────────────────────
+//  TABS
+// ─────────────────────────────────────────────
+function cambiarTab(tab) {
+  document.getElementById('formLogin').style.display    = tab === 'login'    ? '' : 'none';
+  document.getElementById('formRegister').style.display = tab === 'register' ? '' : 'none';
+  document.getElementById('formReset').style.display    = tab === 'reset'    ? '' : 'none';
+  document.getElementById('tabLogin').className    = 'tab' + (tab === 'login'    ? ' active' : '');
+  document.getElementById('tabRegister').className = 'tab' + (tab === 'register' ? ' active' : '');
+  limpiarMensajes();
+}
+
+function mostrarReset() {
+  document.getElementById('formLogin').style.display    = 'none';
+  document.getElementById('formRegister').style.display = 'none';
+  document.getElementById('formReset').style.display    = '';
+  document.getElementById('tabLogin').className    = 'tab';
+  document.getElementById('tabRegister').className = 'tab';
+}
+
+function limpiarMensajes() {
+  ['loginMsg','registerMsg','resetMsg'].forEach(id => {
+    const el = document.getElementById(id);
+    el.className = 'msg';
+    el.textContent = '';
+  });
+}
+
+function showMsg(id, tipo, texto) {
+  const el = document.getElementById(id);
+  el.className = `msg ${tipo}`;
+  el.textContent = texto;
+}
+
+function setLoading(btnId, loading, texto) {
+  const btn = document.getElementById(btnId);
+  btn.disabled = loading;
+  btn.innerHTML = loading
+    ? `<span class="spinner"></span>${texto}`
+    : texto;
+}
+
+// ─────────────────────────────────────────────
+//  LOGIN
+// ─────────────────────────────────────────────
+async function loginSubmit() {
+  const email = document.getElementById('loginEmail').value.trim();
+  const pass  = document.getElementById('loginPass').value;
+
+  if (!email || !pass) { showMsg('loginMsg','error','Completa todos los campos'); return; }
+  if (!SUPA_URL)        { showMsg('loginMsg','error','Configura Supabase primero'); return; }
+
+  setLoading('btnLogin', true, 'Verificando...');
+  try {
+    const data = await supaAuth('token?grant_type=password', {
+      email, password: pass
+    });
+    // Guardar tokens
+    localStorage.setItem('supa_token',   data.access_token);
+    localStorage.setItem('supa_refresh', data.refresh_token);
+    localStorage.setItem('supa_user',    JSON.stringify(data.user));
+
+    showMsg('loginMsg', 'success', '¡Bienvenido! Redirigiendo...');
+    setTimeout(() => { window.location.href = 'index.html'; }, 800);
+
+  } catch(e) {
+    const msg = e.message.includes('Invalid login')
+      ? 'Correo o contraseña incorrectos'
+      : e.message.includes('Email not confirmed')
+      ? 'Debes confirmar tu correo antes de entrar. Revisa tu bandeja de entrada.'
+      : e.message;
+    showMsg('loginMsg', 'error', msg);
+    setLoading('btnLogin', false, 'Entrar');
+  }
+}
+
+// ─────────────────────────────────────────────
+//  REGISTER
+// ─────────────────────────────────────────────
+async function registerSubmit() {
+  const nombre = document.getElementById('regNombre').value.trim();
+  const email  = document.getElementById('regEmail').value.trim();
+  const pass   = document.getElementById('regPass').value;
+  const pass2  = document.getElementById('regPass2').value;
+
+  if (!nombre || !email || !pass || !pass2) {
+    showMsg('registerMsg','error','Completa todos los campos'); return;
+  }
+  if (pass.length < 8) {
+    showMsg('registerMsg','error','La contraseña debe tener al menos 8 caracteres'); return;
+  }
+  if (pass !== pass2) {
+    showMsg('registerMsg','error','Las contraseñas no coinciden'); return;
+  }
+  if (!SUPA_URL) {
+    showMsg('registerMsg','error','Configura Supabase primero'); return;
+  }
+
+  setLoading('btnRegister', true, 'Creando cuenta...');
+  try {
+    await supaAuth('signup', {
+      email,
+      password: pass,
+      data: { nombre_completo: nombre, rol: 'vendedor' }
+    });
+    showMsg('registerMsg', 'success',
+      '✓ Cuenta creada. Revisa tu correo y haz clic en el enlace de confirmación para activarla.');
+    setLoading('btnRegister', false, 'Crear cuenta');
+  } catch(e) {
+    const msg = e.message.includes('already registered')
+      ? 'Este correo ya tiene una cuenta registrada'
+      : e.message;
+    showMsg('registerMsg', 'error', msg);
+    setLoading('btnRegister', false, 'Crear cuenta');
+  }
+}
+
+// ─────────────────────────────────────────────
+//  RESET PASSWORD
+// ─────────────────────────────────────────────
+async function resetSubmit() {
+  const email = document.getElementById('resetEmail').value.trim();
+  if (!email) { showMsg('resetMsg','error','Ingresa tu correo'); return; }
+  if (!SUPA_URL) { showMsg('resetMsg','error','Configura Supabase primero'); return; }
+
+  setLoading('btnReset', true, 'Enviando...');
+  try {
+    await fetch(`${SUPA_URL}/auth/v1/recover`, {
+      method: 'POST',
+      headers: { 'Content-Type':'application/json', 'apikey': SUPA_KEY },
+      body: JSON.stringify({ email }),
+    });
+    showMsg('resetMsg', 'success',
+      '✓ Si ese correo está registrado, recibirás el enlace en unos minutos.');
+    setLoading('btnReset', false, 'Enviar enlace');
+  } catch(e) {
+    showMsg('resetMsg', 'error', 'No se pudo enviar el enlace. Intenta de nuevo.');
+    setLoading('btnReset', false, 'Enviar enlace');
+  }
+}
+</script>
+</body>
+</html>
