@@ -1,7 +1,3 @@
--- ============================================================
--- FERRETERÍA "TICO" — Script de configuración para Supabase
--- Práctica 3.1 — ESCOM — IPN · Grupo 3CV2
--- ============================================================
 
 -- 1. TABLAS MAESTRAS (Base)
 CREATE TABLE IF NOT EXISTS categoria (
