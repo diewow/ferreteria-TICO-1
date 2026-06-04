@@ -144,9 +144,23 @@ Durante el desarrollo se aplicaron conocimientos de:
 * GitHub Pages
 * PostgreSQL
 * Diseño web responsivo
+  
+# Administrador de Chocolate 🍫
+usuario: ferreteriatico@gmail.com
+contraseña: ferreteriatico
 
----
+# Entidades
 
-# 📄 Licencia
+## Entidad relación
 
-Proyecto desarrollado con fines educativos para la materia de Bases de Datos.
+<img src="https://github.com/user-attachments/assets/fc1f17fb-a810-45cb-ae9b-f9a9dd6baacf" loading="lazy" width="900">
+
+# Modelo relacional
+
+<img src="https://github.com/user-attachments/assets/50b5bdb8-dacf-470d-ac2a-c94724f22106" loading="lazy" width="900">
+
+## Modelo relacional extendido
+
+<img src="https://github.com/user-attachments/assets/8e031a87-049b-4a91-b5b9-a8d1425d044d" loading="lazy" width="900">
+
+
